@@ -1,24 +1,21 @@
-package producer
+package producer2
 
 import (
-	// "os"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-
+	"io/ioutil"
+	
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 
 	"main/producer/config"
 )
 
 func Producer() {
-	fmt.Println("🫧  Kafka Producer")
+	fmt.Println("🫧  Kafka Producer2")
 
 	p := config.Kafka()
 	defer p.Close()
 
-	// Go-routine to handle message delivery reports and
-	// possibly other event types (errors, stats, etc)
 	go func() {
 		for e := range p.Events() {
 			switch ev := e.(type) {
@@ -33,20 +30,7 @@ func Producer() {
 		}
 	}()
 
-	// Produce messages to topic (asynchronously)
-	// generate topic to send events
-	topic := "minnnisu-topic"
-
-	// // using JSON file
-	// jsonFile, err := os.Open("./input_data/blocks.json")
-	// if err != nil {
-	// 	fmt.Println("❗️ Failed to open file;", err)
-	// } else {
-	// 	fmt.Println("Successfully Opened JSON file!")
-	// }
-	// defer jsonFile.Close()
-	// data, _ := ioutil.ReadAll(jsonFile)
-
+	topic := "leele-topic"
 
 	// using mockAPI
 	res, err := http.Get("https://6458779a4eb3f674df75126b.mockapi.io/api/mock/tasks")
@@ -61,8 +45,8 @@ func Producer() {
 		fmt.Println("❗️ error;", err)
 		panic(err)
 	}
-	
-	key := "1producer"
+
+	key := "2producer"
 
 	if data != nil {
 		p.Produce(&kafka.Message{
@@ -70,10 +54,7 @@ func Producer() {
 			Key:			[]byte(key),
             Value:          data,
         }, nil)
-	} else {
-		fmt.Printf("❗️ There is no data to send to Kafka")
 	}
 
-	// Wait for message deliveries before shutting down
 	p.Flush(15*1000)
 }

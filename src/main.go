@@ -1,36 +1,40 @@
 package main
 
 import (
-	"main/producer"
+	"time"
 	"sync"
+	"main/producer"
+	"main/producer2"
+	"main/producer3"
 )
 
-func main() {
+func callProducers() {
 	// generate WaitGroup
 	// Used to synchronize goroutines
 	var wg sync.WaitGroup
 
-	wg.Add(4)
+	wg.Add(3)
 
 	go func() {
 		defer wg.Done()		// signal the termination of a goroutine
-		producer.Producer("1")
+		producer.Producer()
 	}()
 
 	go func() {
 		defer wg.Done()
-		producer.Producer("2")
+		producer2.Producer()
 	}()
 
 	go func() {
 		defer wg.Done()
-		producer.Producer("3")
-	}()
-
-	go func() {
-		defer wg.Done()
-		producer.Producer("4")
+		producer3.Producer()
 	}()
 
 	wg.Wait()
+}
+
+func main() {
+	for range time.Tick(1 * time.Second) {
+		callProducers()
+	}
 }
